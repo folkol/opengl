@@ -15,12 +15,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.PixelFormat;
-import org.lwjgl.util.glu.GLU;
 
 public class OpenGL {
 
@@ -57,8 +52,8 @@ public class OpenGL {
         Display.setDisplayMode(new DisplayMode(800, 600));
         Display.create(pixelFormat, contextAtrributes);
 
-        GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
-        GL11.glViewport(0, 0, 800, 600);
+        glClearColor(0.4f, 0.6f, 0.9f, 0f);
+        glViewport(0, 0, 800, 600);
     }
 
     public void setupQuad() {
@@ -80,37 +75,37 @@ public class OpenGL {
         indicesBuffer.put(indices);
         indicesBuffer.flip();
 
-        vaoId = GL30.glGenVertexArrays();
-        GL30.glBindVertexArray(vaoId);
+        vaoId = glGenVertexArrays();
+        glBindVertexArray(vaoId);
 
         // Vertices
-        vboId = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW);
-        GL20.glVertexAttribPointer(0, 4, GL11.GL_FLOAT, false, 0, 0);
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        vboId = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         // Colors
-        vbocId = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbocId);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorsBuffer, GL15.GL_STATIC_DRAW);
-        GL20.glVertexAttribPointer(1, 4, GL11.GL_FLOAT, false, 0, 0);
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        vbocId = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbocId);
+        glBufferData(GL_ARRAY_BUFFER, colorsBuffer, GL_STATIC_DRAW);
+        glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        GL30.glBindVertexArray(0);
+        glBindVertexArray(0);
 
         // Indices
-        vboiId = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId);
-        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+        vboiId = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     private void setupShaders() throws Exception {
         int vsId = loadShader("resources/vertex.glsl", GL_VERTEX_SHADER);
         int fsId = loadShader("resources/fragment.glsl", GL_FRAGMENT_SHADER);
 
-        pId = GL20.glCreateProgram();
+        pId = glCreateProgram();
         glAttachShader(pId, vsId);
         glAttachShader(pId, fsId);
 
@@ -122,7 +117,7 @@ public class OpenGL {
     }
 
     public void render() {
-        GL11.glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(pId);
 
@@ -143,9 +138,9 @@ public class OpenGL {
     }
 
     public int loadShader(String filename, int type) throws Exception {
-        int shaderID = GL20.glCreateShader(type);
-        GL20.glShaderSource(shaderID, slurp(filename));
-        GL20.glCompileShader(shaderID);
+        int shaderID = glCreateShader(type);
+        glShaderSource(shaderID, slurp(filename));
+        glCompileShader(shaderID);
 
         return shaderID;
     }
