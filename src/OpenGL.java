@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -125,6 +126,11 @@ public class OpenGL {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
 
+        int timeUniformLocation = glGetUniformLocation(pId, "time");
+        glUniform1f(timeUniformLocation, getTime());
+        int mouseUniformLocation = glGetUniformLocation(pId, "mouse");
+        glUniform2f(mouseUniformLocation, (Mouse.getX() - 400)/800f, (Mouse.getY() - 300)/600f);
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
         // DRAW!
@@ -152,5 +158,10 @@ public class OpenGL {
         sc.close();
 
         return filedata;
+    }
+
+    long startTime = System.nanoTime();
+    private float getTime() {
+        return (System.nanoTime() - startTime) / 1e9f;
     }
 }
