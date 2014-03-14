@@ -3,20 +3,12 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.Scanner;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.PixelFormat;
 
 public class OpenGL {
 
@@ -28,9 +20,9 @@ public class OpenGL {
     }
 
     public void run() throws Exception {
-        setupOpenGL();
+        GfxUtil.setupOpenGL(_WIDTH, _HEIGHT);
+        pId = GfxUtil.loadShaders("resources/vertex.glsl", "resources/fragment.glsl");
         setupQuad();
-        setupShaders();
 
         while (!Display.isCloseRequested()) {
             render();
@@ -48,18 +40,6 @@ public class OpenGL {
     private int vboiId = 0;
     private int indicesCount = 0;
     private int pId = 0;
-
-    public void setupOpenGL() throws LWJGLException {
-        PixelFormat pixelFormat = new PixelFormat();
-        ContextAttribs contextAtrributes = new ContextAttribs(3, 2).withProfileCore(true);
-
-        Display.setDisplayMode(new DisplayMode(_WIDTH, _HEIGHT));
-        Display.create(pixelFormat, contextAtrributes);
-        Display.setFullscreen(true);
-
-        glClearColor(0.4f, 0.6f, 0.9f, 0f);
-        glViewport(0, 0, _WIDTH, _HEIGHT);
-    }
 
     public void setupQuad() {
         // Vertices, the order is not important. XYZW instead of XYZ
@@ -106,21 +86,6 @@ public class OpenGL {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    private void setupShaders() throws Exception {
-        int vsId = loadShader("resources/vertex.glsl", GL_VERTEX_SHADER);
-        int fsId = loadShader("resources/fragment.glsl", GL_FRAGMENT_SHADER);
-
-        pId = glCreateProgram();
-        glAttachShader(pId, vsId);
-        glAttachShader(pId, fsId);
-
-        glBindAttribLocation(pId, 0, "in_Position");
-        glBindAttribLocation(pId, 1, "in_Color");
-
-        glLinkProgram(pId);
-        glValidateProgram(pId);
-    }
-
     public void render() {
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -145,23 +110,6 @@ public class OpenGL {
         glDisableVertexAttribArray(1);
         glBindVertexArray(0);
         glUseProgram(0);
-    }
-
-    public int loadShader(String filename, int type) throws Exception {
-        int shaderID = glCreateShader(type);
-        glShaderSource(shaderID, slurp(filename));
-        glCompileShader(shaderID);
-
-        return shaderID;
-    }
-
-    private String slurp(String filename) throws FileNotFoundException {
-        @SuppressWarnings("resource")
-        Scanner sc = new Scanner(new FileInputStream(new File(filename))).useDelimiter("\\A");
-        String filedata = sc.next();
-        sc.close();
-
-        return filedata;
     }
 
     long startTime = System.nanoTime();
