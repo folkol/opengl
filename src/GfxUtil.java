@@ -1,5 +1,15 @@
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20.glAttachShader;
+import static org.lwjgl.opengl.GL20.glBindAttribLocation;
+import static org.lwjgl.opengl.GL20.glCompileShader;
+import static org.lwjgl.opengl.GL20.glCreateProgram;
+import static org.lwjgl.opengl.GL20.glCreateShader;
+import static org.lwjgl.opengl.GL20.glLinkProgram;
+import static org.lwjgl.opengl.GL20.glShaderSource;
+import static org.lwjgl.opengl.GL20.glValidateProgram;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,24 +17,26 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.PixelFormat;
 
 
 public class GfxUtil {
 
-    public static void setupOpenGL(int width, int height) throws LWJGLException {
+    public static void setupOpenGL(boolean fullscreen) throws LWJGLException {
         PixelFormat pixelFormat = new PixelFormat();
-        ContextAttribs contextAtrributes = new ContextAttribs(3, 2).withProfileCore(true);
+        ContextAttribs contextAttributes = new ContextAttribs(3, 2).withProfileCore(true);
 
-        Display.setDisplayMode(new DisplayMode(width, height));
-        Display.create(pixelFormat, contextAtrributes);
-        Display.setFullscreen(true);
+        Display.setFullscreen(fullscreen);
+        Display.setVSyncEnabled(true);
+        Display.create(pixelFormat, contextAttributes);
 
         glClearColor(0.4f, 0.6f, 0.9f, 0f);
-        glViewport(0, 0, width, height);
+        glViewport(0, 0, Display.getDisplayMode().getWidth(), Display.getDisplayMode().getHeight());
+
+        Mouse.setGrabbed(true);
     }
 
     public static int loadShader(String filename, int type) throws Exception {

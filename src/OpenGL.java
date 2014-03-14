@@ -1,7 +1,22 @@
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glUniform1f;
+import static org.lwjgl.opengl.GL20.glUniform2f;
+import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -12,15 +27,12 @@ import org.lwjgl.opengl.Display;
 
 public class OpenGL {
 
-    private static final int _WIDTH = 800;
-    private static final int _HEIGHT = 600;
-
     public static void main(String[] args) throws Exception {
         new OpenGL().run();
     }
 
     public void run() throws Exception {
-        GfxUtil.setupOpenGL(_WIDTH, _HEIGHT);
+        GfxUtil.setupOpenGL(true);
         pId = GfxUtil.loadShaders("resources/vertex.glsl", "resources/fragment.glsl");
         setupQuad();
 
@@ -87,7 +99,7 @@ public class OpenGL {
     }
 
     public void render() {
-        glClear(GL_COLOR_BUFFER_BIT);
+        // glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(pId);
 
@@ -98,7 +110,9 @@ public class OpenGL {
         int timeUniformLocation = glGetUniformLocation(pId, "time");
         glUniform1f(timeUniformLocation, getTime());
         int mouseUniformLocation = glGetUniformLocation(pId, "mouse");
-        glUniform2f(mouseUniformLocation, getMouseX(), getMouseY());
+        glUniform2f(mouseUniformLocation, Mouse.getX(), Mouse.getY());
+        int resolutionUniformLocation = glGetUniformLocation(pId, "resolution");
+        glUniform2f(resolutionUniformLocation, Display.getDisplayMode().getWidth(), Display.getDisplayMode().getHeight());
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
@@ -118,10 +132,10 @@ public class OpenGL {
     }
 
     private float getMouseY() {
-        return Mouse.getY()/(float)_HEIGHT;
+        return Mouse.getY() / (float) Display.getDisplayMode().getWidth();
     }
 
     private float getMouseX() {
-        return Mouse.getX()/(float)_WIDTH;
+        return Mouse.getX() / (float) Display.getDisplayMode().getHeight();
     }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="javadoc"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="lwjgl-2.9.1/jar/AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="lwjgl-2.9.1/jar/asm-debug-all.jar"/>
@@ -8,15 +9,15 @@
 	<classpathentry kind="lib" path="lwjgl-2.9.1/jar/lwjgl_test.jar"/>
 	<classpathentry kind="lib" path="lwjgl-2.9.1/jar/lwjgl_util_applet.jar"/>
 	<classpathentry kind="lib" path="lwjgl-2.9.1/jar/lwjgl_util.jar"/>
-	<classpathentry kind="lib" path="lwjgl-2.9.1/jar/lwjgl-debug.jar" sourcepath="lwjgl-2.9.1/src/java">
+	<classpathentry kind="lib" path="lwjgl-2.9.1/jar/lwjgl-debug.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="file:/Users/folkol/code/opengl/javadoc/"/>
+			<attribute name="javadoc_location" value="http://lwjgl.org/javadoc/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lwjgl-2.9.1/jar/lwjgl.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="file:/Users/folkol/code/opengl/javadoc/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="OpenGL/lwjgl-2.9.1/native/macosx"/>
+			<attribute name="javadoc_location" value="http://lwjgl.org/javadoc/"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="OpenGL/lwjgl-2.9.1/native/windows"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lwjgl-2.9.1/jar/lzma.jar"/>
