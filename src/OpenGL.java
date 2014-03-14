@@ -20,6 +20,9 @@ import org.lwjgl.opengl.PixelFormat;
 
 public class OpenGL {
 
+    private static final int _WIDTH = 800;
+    private static final int _HEIGHT = 600;
+
     public static void main(String[] args) throws Exception {
         new OpenGL().run();
     }
@@ -50,16 +53,17 @@ public class OpenGL {
         PixelFormat pixelFormat = new PixelFormat();
         ContextAttribs contextAtrributes = new ContextAttribs(3, 2).withProfileCore(true);
 
-        Display.setDisplayMode(new DisplayMode(800, 600));
+        Display.setDisplayMode(new DisplayMode(_WIDTH, _HEIGHT));
         Display.create(pixelFormat, contextAtrributes);
+        Display.setFullscreen(true);
 
         glClearColor(0.4f, 0.6f, 0.9f, 0f);
-        glViewport(0, 0, 800, 600);
+        glViewport(0, 0, _WIDTH, _HEIGHT);
     }
 
     public void setupQuad() {
         // Vertices, the order is not important. XYZW instead of XYZ
-        float[] vertices = { -0.5f, 0.5f, 0f, 1f, -0.5f, -0.5f, 0f, 1f, 0.5f, -0.5f, 0f, 1f, 0.5f, 0.5f, 0f, 1f };
+        float[] vertices = { -1f, 1f, 0f, 1f, -1f, -1f, 0f, 1f, 1f, -1f, 0f, 1f, 1f, 1f, 0f, 1f };
         FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
         verticesBuffer.put(vertices);
         verticesBuffer.flip();
@@ -129,7 +133,7 @@ public class OpenGL {
         int timeUniformLocation = glGetUniformLocation(pId, "time");
         glUniform1f(timeUniformLocation, getTime());
         int mouseUniformLocation = glGetUniformLocation(pId, "mouse");
-        glUniform2f(mouseUniformLocation, (Mouse.getX() - 400)/800f, (Mouse.getY() - 300)/600f);
+        glUniform2f(mouseUniformLocation, getMouseX(), getMouseY());
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
@@ -163,5 +167,13 @@ public class OpenGL {
     long startTime = System.nanoTime();
     private float getTime() {
         return (System.nanoTime() - startTime) / 1e9f;
+    }
+
+    private float getMouseY() {
+        return Mouse.getY()/(float)_HEIGHT;
+    }
+
+    private float getMouseX() {
+        return Mouse.getX()/(float)_WIDTH;
     }
 }

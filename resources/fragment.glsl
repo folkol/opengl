@@ -6,9 +6,9 @@ out vec4 out_Color;
 uniform float time;
 uniform vec2 mouse;
 
-#define SPEED 10.0
-#define WAVELENGTH 75.0 // Higher number = shorter wavelength :P
-#define AMPLITUDE 0.2
+#define SPEED 20.0
+#define WAVELENGTH 0.2 // Higher number = shorter wavelength :P
+#define AMPLITUDE .2
 #define NUMPAIRS 1
 
 void main( void ) {
