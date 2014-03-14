@@ -28,10 +28,6 @@ import org.lwjgl.opengl.Display;
 public class OpenGL {
 
     public static void main(String[] args) throws Exception {
-        new OpenGL().run();
-    }
-
-    public void run() throws Exception {
         GfxUtil.setupOpenGL(true);
         pId = GfxUtil.loadShaders("resources/vertex.glsl", "resources/fragment.glsl");
         setupQuad();
@@ -46,15 +42,14 @@ public class OpenGL {
     }
 
     // OpenGL variables
-    private int vaoId = 0;
-    private int vboId = 0;
-    private int vbocId = 0;
-    private int vboiId = 0;
-    private int indicesCount = 0;
-    private int pId = 0;
+    private static int vaoId = 0;
+    private static int vboId = 0;
+    private static int vbocId = 0;
+    private static int vboiId = 0;
+    private static int indicesCount = 0;
+    private static int pId = 0;
 
-    public void setupQuad() {
-        // Vertices, the order is not important. XYZW instead of XYZ
+    static public void setupQuad() {
         float[] vertices = { -1f, 1f, 0f, 1f, -1f, -1f, 0f, 1f, 1f, -1f, 0f, 1f, 1f, 1f, 0f, 1f };
         FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
         verticesBuffer.put(vertices);
@@ -98,7 +93,7 @@ public class OpenGL {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    public void render() {
+    static public void render() {
         // glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(pId);
@@ -126,16 +121,9 @@ public class OpenGL {
         glUseProgram(0);
     }
 
-    long startTime = System.nanoTime();
-    private float getTime() {
+    static long startTime = System.nanoTime();
+    static private float getTime() {
         return (System.nanoTime() - startTime) / 1e9f;
     }
 
-    private float getMouseY() {
-        return Mouse.getY() / (float) Display.getDisplayMode().getWidth();
-    }
-
-    private float getMouseX() {
-        return Mouse.getX() / (float) Display.getDisplayMode().getHeight();
-    }
 }

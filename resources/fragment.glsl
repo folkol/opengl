@@ -11,12 +11,12 @@ uniform vec2 resolution;
 #define WAVELENGTH 0.1 // Higher number = shorter wavelength :P
 #define AMPLITUDE .2
 
-float myfunc(vec2 mousepos)
+float wave(vec2 origin)
 {
-  return 0.5 + AMPLITUDE * sin(-SPEED * time + WAVELENGTH * distance(gl_FragCoord.xy, mousepos));
+  return 0.5 + AMPLITUDE * sin(-SPEED * time + WAVELENGTH * distance(gl_FragCoord.xy, origin));
 }
 
 void main( void ) {
-  float color = myfunc(mouse) + myfunc(resolution - mouse);
+  float color = wave(mouse) + wave(resolution - mouse);
   out_Color = vec4( color, color, color, 1 );
 }
