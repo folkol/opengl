@@ -1,6 +1,5 @@
 #version 150 core
 
-
 out vec4 out_Color;
 
 uniform float time;
