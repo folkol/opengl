@@ -7,9 +7,9 @@ uniform float time;
 uniform vec2 mouse;
 uniform vec2 resolution;
 
-#define SPEED 30.0
-#define WAVELENGTH 0.1 // Higher number = shorter wavelength :P
-#define AMPLITUDE .2
+#define SPEED 10.0
+#define WAVELENGTH .05 // Higher number = shorter wavelength :P
+#define AMPLITUDE 0.5
 
 float wave(vec2 origin)
 {
@@ -18,5 +18,5 @@ float wave(vec2 origin)
 
 void main( void ) {
   float color = wave(mouse) + wave(resolution - mouse);
-  out_Color = vec4( color, color, color, 1 );
+  out_Color = vec4( color, 0., 0., 1);
 }

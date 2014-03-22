@@ -2,6 +2,7 @@ import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -25,17 +26,20 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
-public class OpenGL {
+public class ShaderBasics {
 
     public static void main(String[] args) throws Exception {
-        GfxUtil.setupOpenGL(true);
-        pId = GfxUtil.loadShaders("resources/vertex.glsl", "resources/fragment.glsl");
+        GlUtil.setupOpenGL(false);
+        pId = GlUtil.loadShaders("resources/vertex.glsl", "resources/fragment.glsl");
         setupQuad();
 
         while (!Display.isCloseRequested()) {
             render();
             Display.sync(60);
             Display.update();
+            if (Display.wasResized()) {
+                glViewport(0, 0, Display.getWidth(), Display.getHeight());
+            }
         }
 
         Display.destroy();
@@ -43,11 +47,9 @@ public class OpenGL {
 
     // OpenGL variables
     private static int vaoId = 0;
-    private static int vboId = 0;
-    private static int vbocId = 0;
+    private static int pId = 0;
     private static int vboiId = 0;
     private static int indicesCount = 0;
-    private static int pId = 0;
 
     static public void setupQuad() {
         float[] vertices = { -1f, 1f, 0f, 1f, -1f, -1f, 0f, 1f, 1f, -1f, 0f, 1f, 1f, 1f, 0f, 1f };
@@ -71,14 +73,14 @@ public class OpenGL {
         glBindVertexArray(vaoId);
 
         // Vertices
-        vboId = glGenBuffers();
+        int vboId = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
         glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         // Colors
-        vbocId = glGenBuffers();
+        int vbocId = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbocId);
         glBufferData(GL_ARRAY_BUFFER, colorsBuffer, GL_STATIC_DRAW);
         glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
@@ -107,7 +109,7 @@ public class OpenGL {
         int mouseUniformLocation = glGetUniformLocation(pId, "mouse");
         glUniform2f(mouseUniformLocation, Mouse.getX(), Mouse.getY());
         int resolutionUniformLocation = glGetUniformLocation(pId, "resolution");
-        glUniform2f(resolutionUniformLocation, Display.getDisplayMode().getWidth(), Display.getDisplayMode().getHeight());
+        glUniform2f(resolutionUniformLocation, Display.getWidth(), Display.getHeight());
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
 

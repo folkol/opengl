@@ -17,13 +17,13 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.PixelFormat;
 
 
-public class GfxUtil {
+public class GlUtil {
 
     public static void setupOpenGL(boolean fullscreen) throws LWJGLException {
         PixelFormat pixelFormat = new PixelFormat();
@@ -31,12 +31,14 @@ public class GfxUtil {
 
         Display.setFullscreen(fullscreen);
         Display.setVSyncEnabled(true);
+        Display.setDisplayMode(new DisplayMode(400, 400));
+        Display.setResizable(true);
         Display.create(pixelFormat, contextAttributes);
 
         glClearColor(0.4f, 0.6f, 0.9f, 0f);
         glViewport(0, 0, Display.getDisplayMode().getWidth(), Display.getDisplayMode().getHeight());
 
-        Mouse.setGrabbed(true);
+        // Mouse.setGrabbed(true);
     }
 
     public static int loadShader(String filename, int type) throws Exception {
@@ -46,16 +48,6 @@ public class GfxUtil {
 
         return shaderID;
     }
-
-    private static String slurp(String filename) throws FileNotFoundException {
-        @SuppressWarnings("resource")
-        Scanner sc = new Scanner(new FileInputStream(new File(filename))).useDelimiter("\\A");
-        String filedata = sc.next();
-        sc.close();
-
-        return filedata;
-    }
-
 
     public static int loadShaders(String vs, String fs) throws Exception {
         int vsId = loadShader("resources/vertex.glsl", GL_VERTEX_SHADER);
@@ -72,6 +64,15 @@ public class GfxUtil {
         glValidateProgram(pId);
 
         return pId;
+    }
+
+    private static String slurp(String filename) throws FileNotFoundException {
+        @SuppressWarnings("resource")
+        Scanner sc = new Scanner(new FileInputStream(new File(filename))).useDelimiter("\\A");
+        String filedata = sc.next();
+        sc.close();
+
+        return filedata;
     }
 
 }
