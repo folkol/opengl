@@ -79,13 +79,6 @@ public class ShaderBasics {
         glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        // Colors
-        int vbocId = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbocId);
-        glBufferData(GL_ARRAY_BUFFER, colorsBuffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
         glBindVertexArray(0);
 
         // Indices
@@ -102,7 +95,6 @@ public class ShaderBasics {
 
         glBindVertexArray(vaoId);
         glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
 
         int timeUniformLocation = glGetUniformLocation(pId, "time");
         glUniform1f(timeUniformLocation, getTime());
@@ -118,7 +110,6 @@ public class ShaderBasics {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
         glBindVertexArray(0);
         glUseProgram(0);
     }
