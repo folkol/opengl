@@ -37,15 +37,11 @@ public class ShaderBasics {
 
     static public void setupQuad() {
         final float size = 0.5f;
-        float[] vertices = { -size, size, 0f, 1f, -size, -size, 0f, 1f, size, -size, 0f, 1f, size, size, 0f, 1f };
+        final float w = 0.8f;
+        float[] vertices = { -size, size, 0f, w, -size, -size, 0f, w, size, -size, 0f, w, size, size, 0f, w };
         FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
         verticesBuffer.put(vertices);
         verticesBuffer.flip();
-
-        float[] colors = { 1f, 0f, 0f, 1f, 0f, 1f, 0f, 1f, 0f, 0f, 1f, 1f, 1f, 1f, 1f, 1f, };
-        FloatBuffer colorsBuffer = BufferUtils.createFloatBuffer(colors.length);
-        colorsBuffer.put(colors);
-        colorsBuffer.flip();
 
         // OpenGL expects to draw vertices in counter clockwise order by default
         byte[] indices = { 0, 1, 2, 2, 3, 0 };
