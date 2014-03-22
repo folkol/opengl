@@ -26,14 +26,13 @@ import org.lwjgl.opengl.PixelFormat;
 public class GlUtil {
 
     public static void setupOpenGL(boolean fullscreen) throws LWJGLException {
-        PixelFormat pixelFormat = new PixelFormat();
         ContextAttribs contextAttributes = new ContextAttribs(3, 2).withProfileCore(true);
 
         Display.setFullscreen(fullscreen);
         Display.setVSyncEnabled(true);
         Display.setDisplayMode(new DisplayMode(400, 400));
         Display.setResizable(true);
-        Display.create(pixelFormat, contextAttributes);
+        Display.create(new PixelFormat(), contextAttributes);
 
         glClearColor(0.4f, 0.6f, 0.9f, 0f);
         glViewport(0, 0, Display.getDisplayMode().getWidth(), Display.getDisplayMode().getHeight());
