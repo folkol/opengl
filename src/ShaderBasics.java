@@ -49,8 +49,8 @@ import org.lwjgl.opengl.PixelFormat;
 public class ShaderBasics {
 
     public static void main(String[] args) throws Exception {
-        setupOpenGL(false);
-        pId = loadShaders("resources/vertex.glsl", "resources/fragment.glsl");
+        setupOpenGL();
+        pId = loadShaders();
         setupQuad();
 
         while (!Display.isCloseRequested()) {
@@ -135,10 +135,9 @@ public class ShaderBasics {
         return (System.nanoTime() - startTime) / 1e9f;
     }
 
-    public static void setupOpenGL(boolean fullscreen) throws LWJGLException {
+    public static void setupOpenGL() throws LWJGLException {
         ContextAttribs contextAttributes = new ContextAttribs(3, 2).withProfileCore(true);
 
-        Display.setFullscreen(true);
         Display.setVSyncEnabled(true);
         // Display.setDisplayMode(new DisplayMode(400, 400));
         Display.setResizable(true);
@@ -150,15 +149,7 @@ public class ShaderBasics {
         Mouse.setGrabbed(true);
     }
 
-    public static int loadShader(String filename, int type) throws Exception {
-        int shaderID = glCreateShader(type);
-        glShaderSource(shaderID, slurp(filename));
-        glCompileShader(shaderID);
-
-        return shaderID;
-    }
-
-    public static int loadShaders(String vs, String fs) throws Exception {
+    public static int loadShaders() throws Exception {
         int vsId = loadShader("resources/vertex.glsl", GL_VERTEX_SHADER);
         int fsId = loadShader("resources/fragment.glsl", GL_FRAGMENT_SHADER);
 
@@ -167,12 +158,19 @@ public class ShaderBasics {
         glAttachShader(pId, fsId);
 
         glBindAttribLocation(pId, 0, "in_Position");
-        glBindAttribLocation(pId, 1, "in_Color");
 
         glLinkProgram(pId);
         glValidateProgram(pId);
 
         return pId;
+    }
+
+    public static int loadShader(String filename, int type) throws Exception {
+        int shaderID = glCreateShader(type);
+        glShaderSource(shaderID, slurp(filename));
+        glCompileShader(shaderID);
+
+        return shaderID;
     }
 
     private static String slurp(String filename) throws FileNotFoundException {
