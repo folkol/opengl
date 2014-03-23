@@ -7,11 +7,11 @@ uniform vec2 mouse;
 uniform vec2 resolution;
 
 void main(void) {
-    float Angle = time;// * mouse.x/resolution.x;
+    float Angle = 0.1 * sin(time);
     mat4 rotz = mat4(cos( Angle ), -sin( Angle ), 0.0, 0.0,
-                    sin( Angle ),  cos( Angle ),  0.0, 0.0,
-                    0.0,           0.0,           1.0, 0.0,
-                    0.0,           0.0,           0.0, 1.0);
+                     sin( Angle ),  cos( Angle ),  0.0, 0.0,
+                     0.0,           0.0,           1.0, 0.0,
+                     0.0,           0.0,           0.0, 1.0);
 
     mat4 roty = mat4(cos( Angle ),  0.0, sin( Angle ), 0.0,
                      0.0,           1.0, 0.0,          0.0,

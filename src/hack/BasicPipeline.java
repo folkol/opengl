@@ -1,3 +1,5 @@
+package hack;
+
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
@@ -46,15 +48,22 @@ import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.PixelFormat;
 
-public class ShaderBasics {
+public class BasicPipeline {
+
+    static class Quad {
+        static int vaoId = 0;
+        static int pId = 0;
+        static int vboiId = 0;
+        static int indicesCount = 0;
+    }
 
     public static void main(String[] args) throws Exception {
         setupOpenGL();
-        pId = loadShaders();
         setupQuad();
 
         while (!Display.isCloseRequested()) {
             render();
+
             Display.sync(60);
             Display.update();
             if (Display.wasResized()) {
@@ -65,29 +74,24 @@ public class ShaderBasics {
         Display.destroy();
     }
 
-    // OpenGL variables
-    private static int vaoId = 0;
-    private static int pId = 0;
-    private static int vboiId = 0;
-    private static int indicesCount = 0;
+    static public void setupQuad() throws Exception {
+        loadShaders();
 
-    static public void setupQuad() {
         final float size = 0.6f;
-        final float w = 1f;
-        float[] vertices = { -size, size, 0f, w, -size, -size, 0f, w, size, -size, 0f, w, size, size, 0f, w };
+        float[] vertices = { -size, size, 0f, 1f, -size, -size, 0f, 1f, size, -size, 0f, 1f, size, size, 0f, 1f };
         FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
         verticesBuffer.put(vertices);
         verticesBuffer.flip();
 
         // OpenGL expects to draw vertices in counter clockwise order by default
         byte[] indices = { 0, 1, 2, 2, 3, 0 };
-        indicesCount = indices.length;
-        ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(indicesCount);
+        Quad.indicesCount = indices.length;
+        ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(Quad.indicesCount);
         indicesBuffer.put(indices);
         indicesBuffer.flip();
 
-        vaoId = glGenVertexArrays();
-        glBindVertexArray(vaoId);
+        Quad.vaoId = glGenVertexArrays();
+        glBindVertexArray(Quad.vaoId);
 
         // Vertices
         int vboId = glGenBuffers();
@@ -99,30 +103,31 @@ public class ShaderBasics {
         glBindVertexArray(0);
 
         // Indices
-        vboiId = glGenBuffers();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
+        Quad.vboiId = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Quad.vboiId);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     static public void render() {
+        glClearColor(0.4f, 0.6f, 0.9f, 0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(pId);
+        glUseProgram(Quad.pId);
 
-        int timeUniformLocation = glGetUniformLocation(pId, "time");
-        glUniform1f(timeUniformLocation, getTime());
-        int mouseUniformLocation = glGetUniformLocation(pId, "mouse");
+        int timeUniformLocation = glGetUniformLocation(Quad.pId, "time");
+        glUniform1f(timeUniformLocation, getElapsedTime());
+        int mouseUniformLocation = glGetUniformLocation(Quad.pId, "mouse");
         glUniform2f(mouseUniformLocation, Mouse.getX(), Mouse.getY());
-        int resolutionUniformLocation = glGetUniformLocation(pId, "resolution");
+        int resolutionUniformLocation = glGetUniformLocation(Quad.pId, "resolution");
         glUniform2f(resolutionUniformLocation, Display.getWidth(), Display.getHeight());
 
-        glBindVertexArray(vaoId);
+        glBindVertexArray(Quad.vaoId);
         glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Quad.vboiId);
 
         // DRAW!
-        glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_BYTE, 0);
+        glDrawElements(GL_TRIANGLES, Quad.indicesCount, GL_UNSIGNED_BYTE, 0);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glDisableVertexAttribArray(0);
@@ -131,7 +136,7 @@ public class ShaderBasics {
     }
 
     static long startTime = System.nanoTime();
-    static private float getTime() {
+    static private float getElapsedTime() {
         return (System.nanoTime() - startTime) / 1e9f;
     }
 
@@ -139,30 +144,24 @@ public class ShaderBasics {
         ContextAttribs contextAttributes = new ContextAttribs(3, 2).withProfileCore(true);
 
         Display.setVSyncEnabled(true);
-        // Display.setDisplayMode(new DisplayMode(400, 400));
         Display.setResizable(true);
         Display.create(new PixelFormat(), contextAttributes);
-
-        glClearColor(0.4f, 0.6f, 0.9f, 0f);
         glViewport(0, 0, Display.getDisplayMode().getWidth(), Display.getDisplayMode().getHeight());
-
         Mouse.setGrabbed(true);
     }
 
-    public static int loadShaders() throws Exception {
-        int vsId = loadShader("resources/vertex.glsl", GL_VERTEX_SHADER);
-        int fsId = loadShader("resources/fragment.glsl", GL_FRAGMENT_SHADER);
+    public static void loadShaders() throws Exception {
+        int vsId = loadShader("resources/hack/vertex.glsl", GL_VERTEX_SHADER);
+        int fsId = loadShader("resources/hack/fragment.glsl", GL_FRAGMENT_SHADER);
 
-        int pId = glCreateProgram();
-        glAttachShader(pId, vsId);
-        glAttachShader(pId, fsId);
+        Quad.pId = glCreateProgram();
+        glAttachShader(Quad.pId, vsId);
+        glAttachShader(Quad.pId, fsId);
 
-        glBindAttribLocation(pId, 0, "in_Position");
+        glBindAttribLocation(Quad.pId, 0, "in_Position");
 
-        glLinkProgram(pId);
-        glValidateProgram(pId);
-
-        return pId;
+        glLinkProgram(Quad.pId);
+        glValidateProgram(Quad.pId);
     }
 
     public static int loadShader(String filename, int type) throws Exception {
