@@ -17,9 +17,9 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.PixelFormat;
 
 
@@ -28,16 +28,16 @@ public class GlUtil {
     public static void setupOpenGL(boolean fullscreen) throws LWJGLException {
         ContextAttribs contextAttributes = new ContextAttribs(3, 2).withProfileCore(true);
 
-        Display.setFullscreen(fullscreen);
+        Display.setFullscreen(true);
         Display.setVSyncEnabled(true);
-        Display.setDisplayMode(new DisplayMode(400, 400));
+        // Display.setDisplayMode(new DisplayMode(400, 400));
         Display.setResizable(true);
         Display.create(new PixelFormat(), contextAttributes);
 
         glClearColor(0.4f, 0.6f, 0.9f, 0f);
         glViewport(0, 0, Display.getDisplayMode().getWidth(), Display.getDisplayMode().getHeight());
 
-        // Mouse.setGrabbed(true);
+        Mouse.setGrabbed(true);
     }
 
     public static int loadShader(String filename, int type) throws Exception {
