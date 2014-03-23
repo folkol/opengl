@@ -54,7 +54,7 @@ public class ShaderBasics {
     private static int indicesCount = 0;
 
     static public void setupQuad() {
-        final float size = 0.2f;
+        final float size = 0.6f;
         final float w = 1f;
         float[] vertices = { -size, size, 0f, w, -size, -size, 0f, w, size, -size, 0f, w, size, size, 0f, w };
         FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
@@ -92,9 +92,6 @@ public class ShaderBasics {
 
         glUseProgram(pId);
 
-        glBindVertexArray(vaoId);
-        glEnableVertexAttribArray(0);
-
         int timeUniformLocation = glGetUniformLocation(pId, "time");
         glUniform1f(timeUniformLocation, getTime());
         int mouseUniformLocation = glGetUniformLocation(pId, "mouse");
@@ -102,6 +99,8 @@ public class ShaderBasics {
         int resolutionUniformLocation = glGetUniformLocation(pId, "resolution");
         glUniform2f(resolutionUniformLocation, Display.getWidth(), Display.getHeight());
 
+        glBindVertexArray(vaoId);
+        glEnableVertexAttribArray(0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
 
         // DRAW!

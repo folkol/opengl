@@ -18,7 +18,8 @@ void main(void) {
                      -sin( Angle ), 0.0, cos( Angle ), 0.0,
                      0.0,           0.0, 0.0,          1.0);
 
-    vec4 pos = rotz * roty * in_Position;
+    //vec4 pos = rotz * roty * in_Position;
+    vec4 pos = rotz * in_Position;
     
     float perspective_factor = pos.z * 0.5 + 1.0;
     gl_Position = vec4(pos.xyz/perspective_factor, 1.0);
