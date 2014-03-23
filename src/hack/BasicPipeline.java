@@ -50,13 +50,6 @@ import org.lwjgl.opengl.PixelFormat;
 
 public class BasicPipeline {
 
-    static class Quad {
-        static int vaoId = 0;
-        static int pId = 0;
-        static int vboiId = 0;
-        static int indicesCount = 0;
-    }
-
     public static void main(String[] args) throws Exception {
         setupOpenGL();
         setupQuad();
@@ -115,24 +108,25 @@ public class BasicPipeline {
 
         glUseProgram(Quad.pId);
 
-        int timeUniformLocation = glGetUniformLocation(Quad.pId, "time");
-        glUniform1f(timeUniformLocation, getElapsedTime());
-        int mouseUniformLocation = glGetUniformLocation(Quad.pId, "mouse");
-        glUniform2f(mouseUniformLocation, Mouse.getX(), Mouse.getY());
-        int resolutionUniformLocation = glGetUniformLocation(Quad.pId, "resolution");
-        glUniform2f(resolutionUniformLocation, Display.getWidth(), Display.getHeight());
+        setUniforms();
 
         glBindVertexArray(Quad.vaoId);
         glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Quad.vboiId);
 
         // DRAW!
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Quad.vboiId);
         glDrawElements(GL_TRIANGLES, Quad.indicesCount, GL_UNSIGNED_BYTE, 0);
-
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
         glDisableVertexAttribArray(0);
         glBindVertexArray(0);
         glUseProgram(0);
+    }
+
+    private static void setUniforms() {
+        glUniform1f(glGetUniformLocation(Quad.pId, "time"), getElapsedTime());
+        glUniform2f(glGetUniformLocation(Quad.pId, "mouse"), Mouse.getX(), Mouse.getY());
+        glUniform2f(glGetUniformLocation(Quad.pId, "resolution"), Display.getWidth(), Display.getHeight());
     }
 
     static long startTime = System.nanoTime();
@@ -147,7 +141,6 @@ public class BasicPipeline {
         Display.setResizable(true);
         Display.create(new PixelFormat(), contextAttributes);
         glViewport(0, 0, Display.getDisplayMode().getWidth(), Display.getDisplayMode().getHeight());
-        Mouse.setGrabbed(true);
     }
 
     public static void loadShaders() throws Exception {
@@ -179,6 +172,13 @@ public class BasicPipeline {
         sc.close();
 
         return filedata;
+    }
+
+    static class Quad {
+        static int vaoId = 0;
+        static int pId = 0;
+        static int vboiId = 0;
+        static int indicesCount = 0;
     }
 
 }
