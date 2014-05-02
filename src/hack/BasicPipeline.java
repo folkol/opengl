@@ -50,11 +50,12 @@ import org.lwjgl.opengl.PixelFormat;
 
 public class BasicPipeline {
 
-    static Quad quad;
+    static Quad quads[] = new Quad[2];
 
     public static void main(String[] args) throws Exception {
         setupOpenGL();
-        quad = createQuad();
+        quads[0] = createQuad(1.0f);
+        quads[1] = createQuad(2.0f);
 
         while (!Display.isCloseRequested()) {
             render();
@@ -69,10 +70,11 @@ public class BasicPipeline {
         Display.destroy();
     }
 
-    static public Quad createQuad() throws Exception {
+    static public Quad createQuad(float timeFactor) throws Exception {
 
         Quad quad = new Quad();
         quad.pId = loadShaders();
+        quad.timeFactor = timeFactor;
 
         final float size = 0.6f;
         float[] vertices = { -size, size, 0f, 1f, -size, -size, 0f, 1f, size, -size, 0f, 1f, size, size, 0f, 1f };
@@ -112,25 +114,27 @@ public class BasicPipeline {
         glClearColor(0.4f, 0.6f, 0.9f, 0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(quad.pId);
+        for(Quad quad : quads) {
+            glUseProgram(quad.pId);
 
-        setUniforms();
+            setUniforms(quad);
 
-        glBindVertexArray(quad.vaoId);
-        glEnableVertexAttribArray(0);
+            glBindVertexArray(quad.vaoId);
+            glEnableVertexAttribArray(0);
 
-        // DRAW!
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quad.vboiId);
-        glDrawElements(GL_TRIANGLES, quad.indicesCount, GL_UNSIGNED_BYTE, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            // DRAW!
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quad.vboiId);
+            glDrawElements(GL_TRIANGLES, quad.indicesCount, GL_UNSIGNED_BYTE, 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-        glDisableVertexAttribArray(0);
-        glBindVertexArray(0);
-        glUseProgram(0);
+            glDisableVertexAttribArray(0);
+            glBindVertexArray(0);
+            glUseProgram(0);
+        }
     }
 
-    private static void setUniforms() {
-        glUniform1f(glGetUniformLocation(quad.pId, "time"), getElapsedTime());
+    private static void setUniforms(Quad quad) {
+        glUniform1f(glGetUniformLocation(quad.pId, "time"), getElapsedTime() * quad.timeFactor);
         glUniform2f(glGetUniformLocation(quad.pId, "mouse"), Mouse.getX(), Mouse.getY());
         glUniform2f(glGetUniformLocation(quad.pId, "resolution"), Display.getWidth(), Display.getHeight());
     }
@@ -183,6 +187,7 @@ public class BasicPipeline {
     }
 
     static class Quad {
+        public float timeFactor;
         int vaoId = 0;
         int pId = 0;
         int vboiId = 0;
