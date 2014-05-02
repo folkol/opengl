@@ -50,9 +50,11 @@ import org.lwjgl.opengl.PixelFormat;
 
 public class BasicPipeline {
 
+    static Quad quad;
+
     public static void main(String[] args) throws Exception {
         setupOpenGL();
-        setupQuad();
+        quad = createQuad();
 
         while (!Display.isCloseRequested()) {
             render();
@@ -67,8 +69,10 @@ public class BasicPipeline {
         Display.destroy();
     }
 
-    static public void setupQuad() throws Exception {
-        loadShaders();
+    static public Quad createQuad() throws Exception {
+
+        Quad quad = new Quad();
+        quad.pId = loadShaders();
 
         final float size = 0.6f;
         float[] vertices = { -size, size, 0f, 1f, -size, -size, 0f, 1f, size, -size, 0f, 1f, size, size, 0f, 1f };
@@ -78,13 +82,13 @@ public class BasicPipeline {
 
         // OpenGL expects to draw vertices in counter clockwise order by default
         byte[] indices = { 0, 1, 2, 2, 3, 0 };
-        Quad.indicesCount = indices.length;
-        ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(Quad.indicesCount);
+        quad.indicesCount = indices.length;
+        ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(quad.indicesCount);
         indicesBuffer.put(indices);
         indicesBuffer.flip();
 
-        Quad.vaoId = glGenVertexArrays();
-        glBindVertexArray(Quad.vaoId);
+        quad.vaoId = glGenVertexArrays();
+        glBindVertexArray(quad.vaoId);
 
         // Vertices
         int vboId = glGenBuffers();
@@ -96,26 +100,28 @@ public class BasicPipeline {
         glBindVertexArray(0);
 
         // Indices
-        Quad.vboiId = glGenBuffers();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Quad.vboiId);
+        quad.vboiId = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quad.vboiId);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+        return quad;
     }
 
     static public void render() {
         glClearColor(0.4f, 0.6f, 0.9f, 0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(Quad.pId);
+        glUseProgram(quad.pId);
 
         setUniforms();
 
-        glBindVertexArray(Quad.vaoId);
+        glBindVertexArray(quad.vaoId);
         glEnableVertexAttribArray(0);
 
         // DRAW!
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Quad.vboiId);
-        glDrawElements(GL_TRIANGLES, Quad.indicesCount, GL_UNSIGNED_BYTE, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quad.vboiId);
+        glDrawElements(GL_TRIANGLES, quad.indicesCount, GL_UNSIGNED_BYTE, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
         glDisableVertexAttribArray(0);
@@ -124,9 +130,9 @@ public class BasicPipeline {
     }
 
     private static void setUniforms() {
-        glUniform1f(glGetUniformLocation(Quad.pId, "time"), getElapsedTime());
-        glUniform2f(glGetUniformLocation(Quad.pId, "mouse"), Mouse.getX(), Mouse.getY());
-        glUniform2f(glGetUniformLocation(Quad.pId, "resolution"), Display.getWidth(), Display.getHeight());
+        glUniform1f(glGetUniformLocation(quad.pId, "time"), getElapsedTime());
+        glUniform2f(glGetUniformLocation(quad.pId, "mouse"), Mouse.getX(), Mouse.getY());
+        glUniform2f(glGetUniformLocation(quad.pId, "resolution"), Display.getWidth(), Display.getHeight());
     }
 
     static long startTime = System.nanoTime();
@@ -143,18 +149,20 @@ public class BasicPipeline {
         glViewport(0, 0, Display.getDisplayMode().getWidth(), Display.getDisplayMode().getHeight());
     }
 
-    public static void loadShaders() throws Exception {
+    public static int loadShaders() throws Exception {
         int vsId = loadShader("resources/hack/vertex.glsl", GL_VERTEX_SHADER);
         int fsId = loadShader("resources/hack/fragment.glsl", GL_FRAGMENT_SHADER);
 
-        Quad.pId = glCreateProgram();
-        glAttachShader(Quad.pId, vsId);
-        glAttachShader(Quad.pId, fsId);
+        int pId = glCreateProgram();
+        glAttachShader(pId, vsId);
+        glAttachShader(pId, fsId);
 
-        glBindAttribLocation(Quad.pId, 0, "in_Position");
+        glBindAttribLocation(pId, 0, "in_Position");
 
-        glLinkProgram(Quad.pId);
-        glValidateProgram(Quad.pId);
+        glLinkProgram(pId);
+        glValidateProgram(pId);
+
+        return pId;
     }
 
     public static int loadShader(String filename, int type) throws Exception {
@@ -175,10 +183,10 @@ public class BasicPipeline {
     }
 
     static class Quad {
-        static int vaoId = 0;
-        static int pId = 0;
-        static int vboiId = 0;
-        static int indicesCount = 0;
+        int vaoId = 0;
+        int pId = 0;
+        int vboiId = 0;
+        int indicesCount = 0;
     }
 
 }
